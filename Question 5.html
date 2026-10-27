@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clear Fare – clickable prototype</title>
+<style>
+:root{--bg:#eef2f1;--card:#fff;--ink:#14231f;--mute:#53645f;--line:#d5dedb;--brand:#0b6b5a;--bi:#fff;--soft:#e2f1ed;--warn:#fdf0d5;--bad:#9a3b2e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1715;--card:#17231f;--ink:#e8f1ee;--mute:#a3b6b0;--line:#2a3b36;--brand:#3fc4a8;--bi:#062019;--soft:#1d332d;--warn:#3a3016;--bad:#e58b7d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1715;--card:#17231f;--ink:#e8f1ee;--mute:#a3b6b0;--line:#2a3b36;--brand:#3fc4a8;--bi:#062019;--soft:#1d332d;--warn:#3a3016;--bad:#e58b7d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:12px;gap:10px}
+button{font:inherit;color:inherit}button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:4px}
+.tabs button{border:0;background:transparent;font-weight:600;padding:8px 16px;border-radius:99px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--brand);color:var(--bi)}
+.hint{width:100%;max-width:400px;background:var(--soft);border:1px dashed var(--brand);border-radius:12px;padding:8px 12px;font-size:13px}
+.phone{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.hd{padding:12px 16px;border-bottom:1px solid var(--line)}
+.route{display:flex;gap:10px;align-items:center;font-size:14px}.dots{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--brand);font-size:10px}
+.pane{display:none;padding:14px 16px 18px}.pane.on{display:block}
+.m{font-size:12px;color:var(--mute);margin-top:2px}.n{font-weight:600}
+.ride{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:9px}
+button.ride{cursor:pointer}.ride.sel{border:2px solid var(--brand);background:var(--soft)}
+.p{font-weight:700;font-size:17px;text-align:right}.was{display:block;font-weight:400;font-size:12px;color:var(--mute);text-decoration:line-through}
+.tag{display:inline-block;background:var(--brand);color:var(--bi);font-size:11px;font-weight:600;border-radius:99px;padding:2px 8px;margin-bottom:4px}
+.why{font-size:13px;margin:0 0 8px;color:var(--mute)}
+.link{background:none;border:0;color:var(--brand);font-weight:600;padding:6px 0;cursor:pointer}
+.sheet{display:none;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:4px 0 10px}.sheet.on{display:block}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}.opt:last-of-type{border:0}
+.opt input{margin-top:4px;accent-color:var(--brand)}
+.adj{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px}
+.adj button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:18px;cursor:pointer}
+.sum{background:var(--soft);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:14px}.sum div{display:flex;justify-content:space-between;margin:3px 0}
+.btn{width:100%;border:0;background:var(--brand);color:var(--bi);font-weight:700;padding:14px;border-radius:14px;cursor:pointer;margin-top:4px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.chips{display:flex;gap:8px;margin-bottom:8px}.chip{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px;font-size:13px;display:flex;justify-content:space-between}
+.banner{background:var(--warn);border-radius:10px;padding:9px 11px;font-size:13px;margin-bottom:8px}
+.c{text-align:center}.pulse{width:42px;height:42px;border-radius:50%;background:var(--brand);margin:14px auto;animation:p 1.4s ease-in-out infinite}
+@keyframes p{50%{transform:scale(1.25);opacity:.55}}@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+.err{color:var(--bad);font-size:12px;min-height:16px;margin:2px 0}
+</style></head>
+<body>
+<div class="tabs" role="group" aria-label="Screen"><button id="tT" aria-pressed="false">Today (problem)</button><button id="tC" aria-pressed="true">Clear Fare (fix)</button></div>
+<div class="hint" id="hint" role="status"></div>
+<main class="phone">
+ <div class="hd"><div class="route"><div class="dots" aria-hidden="true">●<span>│</span>■</div><div><div class="n">Gulshan 2</div><div class="n">Motijheel</div></div></div><div class="m">Prototype · sample data only</div></div>
+
+ <section class="pane" id="today">
+  <div class="chips"><div class="chip">Pickup now ▾</div><div class="chip">Discount ▾</div></div>
+  <div class="chip" style="margin-bottom:8px"><span>Pay (Connect now)</span><span>▾</span></div>
+  <div class="banner">Get 2x points using pay!</div>
+  <div class="ride sel"><div><div class="n">Bike</div><div class="m">Fare − / + · Offers</div></div><div class="p">~৳140</div></div>
+  <div class="ride"><div><div class="n">CNG</div><div class="m">Offers</div></div><div class="p">~৳260</div></div>
+  <div class="ride"><div><div class="n">Car</div></div><div class="p"><span class="was">~৳360</span>~৳320</div></div>
+  <button class="btn" disabled>Choose Bike</button>
+  <p class="m">Five controls and promos compete before the button. Prices are approximate.</p>
+ </section>
+
+ <section class="pane on" id="s1">
+  <button class="ride sel" data-r="Bike" data-b="140"><div><span class="tag">Best for you</span><div class="n">Bike</div><div class="m">3 min away</div></div><div class="p"><span class="was">৳140</span><span class="fp">৳119</span></div></button>
+  <button class="ride" data-r="CNG" data-b="260"><div><div class="n">CNG</div><div class="m">5 min away</div></div><div class="p"><span class="was">৳260</span><span class="fp">৳221</span></div></button>
+  <button class="ride" data-r="Car" data-b="320"><div><div class="n">Car</div><div class="m">6 min away</div></div><div class="p"><span class="was">৳320</span><span class="fp">৳272</span></div></button>
+  <p class="why" id="why">Best offer applied automatically: WELCOME15 saves ৳21.</p>
+  <button class="link" id="tg" aria-expanded="false">Change offer or fare</button>
+  <div class="sheet" id="sheet">
+   <label class="opt"><input type="radio" name="o" value="best" checked><span><span class="n">Best offer (WELCOME15, 15% off)</span><div class="m">Chosen for you</div></span></label>
+   <label class="opt"><input type="radio" name="o" value="pts"><span><span class="n">Earn 2x points, no discount</span><div class="m">Standard fare</div></span></label>
+   <label class="opt"><input type="radio" name="o" value="none"><span><span class="n">No offer</span><div class="m">Standard fare</div></span></label>
+   <div class="adj"><span>Offer a different fare</span><span><button id="mi" aria-label="Decrease fare by 10 taka">−</button> <b id="av">0</b> <button id="pl" aria-label="Increase fare by 10 taka">+</button></span></div>
+   <div class="err" id="err" role="alert"></div>
+  </div>
+  <div class="sum"><div><span>Total</span><b id="tot">৳119</b></div><div><span>Pay with</span><button class="link" id="pay" style="padding:0">Cash ▾</button></div></div>
+  <button class="btn" id="bk">Confirm Bike · ৳119</button>
+ </section>
+
+ <section class="pane c" id="s2">
+  <div class="pulse" aria-hidden="true"></div>
+  <h2 id="h2" style="margin:0 0 4px;font-size:17px">Finding your driver…</h2>
+  <p class="m" id="lock"></p>
+  <div class="sum" id="drv" style="display:none;text-align:left"><div><b>Rahim · Bike</b><span>4.8 ★</span></div><div><span>Arrives in 3 min</span><span id="pm">Cash</span></div><div><span>Fare locked</span><b id="fl"></b></div></div>
+  <button class="btn ghost" id="cx">Cancel ride</button>
+  <div id="cc" style="display:none"><p class="m">Cancel this ride?</p><button class="btn" id="yes">Yes, cancel</button> <button class="btn ghost" id="no">Keep ride</button></div>
+ </section>
+</main>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},base=140,ride="Bike",adj=0,mode="best",pay="Cash",t=null;
+var H={today:"Show the problem: many controls before the button.",s1:"Tap a ride, open 'Change offer or fare', use + / −, then Confirm.",s2:"Fare is locked and the driver is found. Use Cancel ride to test it."};
+function pane(id){["today","s1","s2"].forEach(function(x){$(x).classList.toggle("on",x===id)});$("hint").textContent="Demo tip: "+H[id]}
+function tab(c){$("tT").setAttribute("aria-pressed",!c);$("tC").setAttribute("aria-pressed",c);pane(c?"s1":"today")}
+function disc(){return mode==="best"?Math.round(base*0.85):base}
+function price(){return disc()+adj}
+function render(){var p=price();$("tot").textContent="৳"+p;$("av").textContent=(adj>0?"+":"")+adj;$("bk").textContent="Confirm "+ride+" · ৳"+p;
+$("why").textContent=mode==="best"?"Best offer applied automatically: WELCOME15 saves ৳"+(base-disc())+".":mode==="pts"?"No discount. You earn 2x points on this ride.":"No offer applied.";
+document.querySelectorAll("#s1 button.ride[data-r]").forEach(function(b){var f=b.querySelector(".fp"),w=b.querySelector(".was"),bb=+b.dataset.b;f.textContent="৳"+(mode==="best"?Math.round(bb*0.85):bb);w.style.display=mode==="best"?"block":"none"})}
+$("tT").onclick=function(){tab(false)};$("tC").onclick=function(){tab(true)};
+document.querySelectorAll("#s1 button.ride[data-r]").forEach(function(b){b.onclick=function(){document.querySelectorAll("#s1 button.ride[data-r]").forEach(function(x){x.classList.remove("sel");var g=x.querySelector(".tag");if(g)g.remove()});b.classList.add("sel");var g=document.createElement("span");g.className="tag";g.textContent="Best for you";b.firstElementChild.insertBefore(g,b.firstElementChild.firstChild);ride=b.dataset.r;base=+b.dataset.b;adj=0;$("err").textContent="";render()}});
+$("tg").onclick=function(){var o=$("sheet").classList.toggle("on");$("tg").setAttribute("aria-expanded",o);$("tg").textContent=o?"Hide options":"Change offer or fare"};
+document.querySelectorAll('input[name="o"]').forEach(function(r){r.onchange=function(){mode=r.value;render()}});
+$("mi").onclick=function(){if(adj<=-30){$("err").textContent="Lowest allowed change is −30.";return}adj-=10;$("err").textContent="";render()};
+$("pl").onclick=function(){if(adj>=30){$("err").textContent="Highest allowed change is +30.";return}adj+=10;$("err").textContent="";render()};
+$("pay").onclick=function(){pay=pay==="Cash"?"Mobile wallet":"Cash";$("pay").textContent=pay+" ▾"};
+$("bk").onclick=function(){var p=price();pane("s2");$("drv").style.display="none";$("cc").style.display="none";$("cx").style.display="block";$("h2").textContent="Finding your driver…";$("lock").textContent="Fare locked at ৳"+p+". It will not change after pickup.";$("fl").textContent="৳"+p;$("pm").textContent=pay;clearTimeout(t);t=setTimeout(function(){$("h2").textContent="Driver on the way";$("drv").style.display="block"},2200)};
+$("cx").onclick=function(){$("cx").style.display="none";$("cc").style.display="block"};
+$("no").onclick=function(){$("cc").style.display="none";$("cx").style.display="block"};
+$("yes").onclick=function(){clearTimeout(t);adj=0;mode="best";document.querySelector('input[value="best"]').checked=true;$("sheet").classList.remove("on");$("tg").textContent="Change offer or fare";pane("s1");render()};
+pane("s1");render();})();
+</script></body></html>
